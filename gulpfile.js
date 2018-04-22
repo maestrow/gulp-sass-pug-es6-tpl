@@ -9,11 +9,9 @@ const gulp        = require ('gulp')
 const sourcemaps  = require ('gulp-sourcemaps')
 const sass        = require ('gulp-sass')
 const pug         = require ('gulp-pug')
-const babel       = require ('gulp-babel')
 //webpack
-const webpack       = require ('webpack')
-//const webpackStream = require ('webpack-stream')
-const webpackConfig = require ('./webpack.config.js')
+const webpack              = require ('webpack')
+const webpackConfig        = require ('./webpack.config.js')
 const webpackDevMiddleware = require ('webpack-dev-middleware')
 const webpackHotMiddleware = require ('webpack-hot-middleware')
 //others
@@ -62,6 +60,9 @@ gulp.task('pug', (cb) => {
   ], cb)
 });
 
+gulp.task('webpack', () => {
+  bundler.run((err, stats) => {})
+})
 
 // === Serving tasks
 
@@ -69,16 +70,18 @@ let clean = (dir) => removeFiles(`${dir}/**/*.*`)
 
 gulp.task('clean', () => clean(dirs.dev))
 
-gulp.task('watch', () => {
+gulp.task('watch-src', () => {
   gulp.watch(`${dirs.src}/sass/**/*.scss`, ['sass'])
   gulp.watch(`${dirs.src}/*.pug`, ['pug'])
 })
 
-gulp.task('build', ['clean', 'sass', 'pug'])
+gulp.task('dev-build', ['clean', 'sass', 'pug']) // webpack task excluded because js recieved from web-sockets, not from fs. 
 
-gulp.task('serve-only', ['watch'], () => {
+gulp.task('run-server', ['watch-src'], () => {
   browserSync.init({
     server: dirs.dev,
+    browser: 'Chrome',
+    startPath: '/react.html',
     middleware: [
       webpackDevMiddleware(bundler),
       webpackHotMiddleware(bundler)
@@ -88,9 +91,9 @@ gulp.task('serve-only', ['watch'], () => {
   gulp.watch([
     `${dirs.dev}/*.html`, 
     `${dirs.dev}/css/*.css`,
-    `${dirs.dev}/*.js`,
+    // js not included
   ]).on('change', browserSync.reload)
 })
 
-gulp.task('serve', ['build', 'serve-only'])
+gulp.task('serve', ['dev-build', 'run-server'])
 

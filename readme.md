@@ -53,3 +53,10 @@ Next you should add to your webpack.config entry point:
     'webpack-hot-middleware/client',
 
 and `new webpack.HotModuleReplacementPlugin()`. If forget one of it, then module compilation will work, but browser won't update automatically. 
+
+Another thing to note: When run browser-sync with dev and hot middleware, the js file should NOT be exists in dist directory, otherwise you get this:
+
+    Uncaught TypeError: reactLifecyclesCompat.polyfill is not a function
+    at Object../node_modules/react-hot-loader/dist/react-hot-loader.development.js
+
+As far as I understood the right way to get js when run with HMR is from web-sockets and not from fs.
