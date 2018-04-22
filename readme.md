@@ -61,6 +61,8 @@ Another thing to note: When run browser-sync with dev and hot middleware, the js
 
 As far as I understood the right way to get js when run with HMR is from web-sockets and not from fs.
 
+## Oh.. that's webpack ... Hey, get chill, buddy
+
 After all my fuss with webpack I unvoluntarilly searched in google:
 
 - https://news.ycombinator.com/item?id=16183863
