@@ -45,14 +45,14 @@ Goal: run `react-hot-loader` v4 in `browser-sync` from `gulp`. We need version 4
 
 In react-hot-loader repo there is an [example](https://github.com/gaearon/react-hot-loader/tree/master/examples/webpack-modern). It works on webpack 3.10. I tries to update it to webpack 4 and get too long module reload time (about 10 seconds). So I downgraded webpack to v3 and update all related modules and save it in separate [repo](https://github.com/maestrow/react-hot-loader4-tpl).
 
-These [two](https://css-tricks.com/combine-webpack-gulp-4/) [articles](https://jsramblings.com/2016/07/16/hot-reloading-gulp-webpack-browsersync.html) helps me to embed webpack-dev-server in browser-sync. I faced in [bug](https://github.com/webpack/webpack-dev-middleware/issues/283) which fixed with downgrading webpack-dev-middleware to version 2. 
+These [two](https://css-tricks.com/combine-webpack-gulp-4/) [articles](https://jsramblings.com/2016/07/16/hot-reloading-gulp-webpack-browsersync.html) helps me to embed webpack-dev-server in browser-sync. I faced [bug](https://github.com/webpack/webpack-dev-middleware/issues/283) which can be fixed by downgrading webpack-dev-middleware to version 2. 
 
-Next you should add to your webpack.config entry point:
+Next you should add this to your webpack.config entry point:
 
     'webpack/hot/dev-server',
     'webpack-hot-middleware/client',
 
-and `new webpack.HotModuleReplacementPlugin()`. If forget one of it, then module compilation will work, but browser won't update automatically. 
+and `new webpack.HotModuleReplacementPlugin()`. If forget one of it, then module compilation will work, but browser  automatically updates won't. 
 
 Another thing to note: When run browser-sync with dev and hot middleware, the js file should NOT be exists in dist directory, otherwise you get this:
 
@@ -60,3 +60,8 @@ Another thing to note: When run browser-sync with dev and hot middleware, the js
     at Object../node_modules/react-hot-loader/dist/react-hot-loader.development.js
 
 As far as I understood the right way to get js when run with HMR is from web-sockets and not from fs.
+
+After all my fuss with webpack I unvoluntarilly searched in google:
+
+- https://news.ycombinator.com/item?id=16183863
+- https://devrant.com/rants/241580/i-fucking-hate-webpack-what-a-massive-stinking-pile-of-shit-this-so-called-build
