@@ -1,6 +1,14 @@
 const path = require('path')
+const webpack = require ('webpack')
 
 module.exports = {
+  entry: {
+    main: [
+      './src/js/app.js',
+      'webpack/hot/dev-server',
+      'webpack-hot-middleware/client',
+    ]
+  },
   output: {
     path: path.resolve(__dirname, './build'),
     filename: '[name].js'
@@ -8,15 +16,14 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.js|\.jsx$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env', '@babel/preset-react']
-          }
-        }
+        use: 'babel-loader'
       }
     ]
-  }
+  },
+  plugins: [
+    new webpack.NamedModulesPlugin(),
+    new webpack.HotModuleReplacementPlugin()
+  ]
 }

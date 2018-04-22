@@ -10,18 +10,19 @@ const sourcemaps  = require ('gulp-sourcemaps')
 const sass        = require ('gulp-sass')
 const pug         = require ('gulp-pug')
 const babel       = require ('gulp-babel')
-const concat      = require ('gulp-concat')
-const uglify      = require ('gulp-uglify')
 //webpack
 const webpack       = require ('webpack')
-const webpackStream = require ('webpack-stream')
+//const webpackStream = require ('webpack-stream')
 const webpackConfig = require ('./webpack.config.js')
+const webpackDevMiddleware = require ('webpack-dev-middleware')
+const webpackHotMiddleware = require ('webpack-hot-middleware')
 //others
 const BrowserSync = require ('browser-sync')
 const pump        = require ('pump')
 //#endregion
 
 const browserSync = BrowserSync.create()
+const bundler = webpack(webpackConfig)
 
 const dirs = {
   src:  './src',   // Sources directory
@@ -61,18 +62,6 @@ gulp.task('pug', (cb) => {
   ], cb)
 });
 
-gulp.task('js', (cb) => {
-  pump([
-    gulp.src(`${dirs.src}/js/*.js`),
-    //sourcemaps.init(),
-    webpackStream(webpackConfig, webpack),
-    //concat('all.js'),
-    //uglify({output: {beautify: true}}),
-    //sourcemaps.write('.'),
-    gulp.dest(dirs.dev),
-  ], cb)
-});
-
 
 // === Serving tasks
 
@@ -83,14 +72,17 @@ gulp.task('clean', () => clean(dirs.dev))
 gulp.task('watch', () => {
   gulp.watch(`${dirs.src}/sass/**/*.scss`, ['sass'])
   gulp.watch(`${dirs.src}/*.pug`, ['pug'])
-  gulp.watch(`${dirs.src}/**/*.@(js|jsx)`, ['js'])
 })
 
-gulp.task('build', ['clean', 'sass', 'pug', 'js'])
+gulp.task('build', ['clean', 'sass', 'pug'])
 
 gulp.task('serve-only', ['watch'], () => {
   browserSync.init({
-    server: dirs.dev
+    server: dirs.dev,
+    middleware: [
+      webpackDevMiddleware(bundler),
+      webpackHotMiddleware(bundler)
+    ]
   })
 
   gulp.watch([
@@ -101,3 +93,4 @@ gulp.task('serve-only', ['watch'], () => {
 })
 
 gulp.task('serve', ['build', 'serve-only'])
+

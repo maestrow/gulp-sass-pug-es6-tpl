@@ -1,7 +1,8 @@
 import React from 'react'
+import { hot } from 'react-hot-loader'
 import City from './city.jsx'
 
-export default ((props) => {
+const Main = (props) => {
   let cities = props.cities.map(i => <City name={i[0]} population={i[1]} />)
   return (
     <div>
@@ -11,4 +12,6 @@ export default ((props) => {
       </div>
     </div>
   )
-})
+}
+
+export default hot(module)(Main)

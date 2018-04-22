@@ -35,9 +35,21 @@ Dev techs: [SASS](http://sass-lang.com/), [PUG](https://pugjs.org), [React](http
 - You can debug gulp tasks in [VS Code](https://code.visualstudio.com/). Change `args` in [launch.json](https://code.visualstudio.com/docs/editor/debugging) to debug specific task.
 
 
-## Q & A
-
-### Q: Why gulp + webpack, why not just only webpack as it can pack everything?
+## Q: Why gulp + webpack, why not just only webpack as it can pack everything?
 
 A: Gulp tasks is a functions, it is just code that uses some libraries. It doesn't cost anythig to start use it. And that's what I like about Gulp. [I like libraries and do not like frameworks](http://tomasp.net/blog/2015/library-frameworks/). On the other side webpack looks like a framework with huge configuration file. I have webpack experience and it takes me longer time to make things work in comparison to gulp. So I persanally don't like webpack. But webpack has (at least) one feature, that I like - it's able to traverse source code tree through `import` directives. And using loaders you can transform source to destination format. Since that at this moment there are no other tool, that can traverce source tree and pass modules through loaders (If there is, please let me know, i.e. send PR to this readme), I use webpack for that specific task. For other build tasks I prefer gulp.
 
+## Adding react-hot-loader and webpack-dev-middleware to browser-sync
+
+Goal: run `react-hot-loader` v4 in `browser-sync` from `gulp`. We need version 4, not lower, because [previous versions considered-harmful](https://codeburst.io/react-hot-loader-considered-harmful-321fe3b6ca74) (author: Thus I suffered from react-hot-loader, thus become a maintainer and build much better V4, and asking you to use it ;)). 
+
+In react-hot-loader repo there is an [example](https://github.com/gaearon/react-hot-loader/tree/master/examples/webpack-modern). It works on webpack 3.10. I tries to update it to webpack 4 and get too long module reload time (about 10 seconds). So I downgraded webpack to v3 and update all related modules and save it in separate [repo](https://github.com/maestrow/react-hot-loader4-tpl).
+
+These [two](https://css-tricks.com/combine-webpack-gulp-4/) [articles](https://jsramblings.com/2016/07/16/hot-reloading-gulp-webpack-browsersync.html) helps me to embed webpack-dev-server in browser-sync. I faced in [bug](https://github.com/webpack/webpack-dev-middleware/issues/283) which fixed with downgrading webpack-dev-middleware to version 2. 
+
+Next you should add to your webpack.config entry point:
+
+    'webpack/hot/dev-server',
+    'webpack-hot-middleware/client',
+
+and `new webpack.HotModuleReplacementPlugin()`. If forget one of it, then module compilation will work, but browser won't update automatically. 
